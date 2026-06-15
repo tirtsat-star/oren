@@ -1,0 +1,23 @@
+  on:
+    schedule:
+      - cron: '0 5 * * 1'
+    workflow_dispatch:
+  
+  permissions:
+    contents: write
+
+    refresh:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: Fetch RASFF & patch index.html
+          run: python3 refresh.py
+        - name: Commit & push
+          run: |
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add index.html
+            git diff --staged --quiet || git commit -m "עדכון אזהרות $(date -u
+  '+%d/%m/%Y %H:%M UTC')"
+            git push
+  
